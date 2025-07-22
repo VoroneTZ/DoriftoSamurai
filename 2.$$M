@@ -1,0 +1,123 @@
+// wmpio (1.30), 22.07.2025
+
+version 711
+
+
+{ //level
+	0
+	2.$$w
+	palette.pcx
+}
+{ //sun
+	5
+	0
+	60
+}
+{ //model
+	3
+	6 380 0
+	0 0 0
+	1 1 1
+	350z.mdl
+	350z_mdl_000
+	ACarRotate
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	-381 1 6
+	360 0 0
+	1 1 1
+	cap.mdl
+	cap_mdl_001
+	ACarRotate
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	380 1 1
+	360 0 0
+	1 1 1
+	celica.mdl
+	celica_mdl_002
+	ACarRotate
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	1 -383 1
+	0 0 0
+	1 1 1
+	rsx.mdl
+	rsx_mdl_003
+	ACarRotate
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	31 19 -51
+	0 0 0
+	44.861336 44.861336 44.861336
+	freewaycrossfreeway.mdl
+	freewaycrossfre_004
+	ndef
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	-1982 -877 20
+	0 0 0
+	44.84024 44.84024 44.84024
+	freewaycurve1.mdl
+	freewaycurve1_006
+	ndef
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	926 -1998 21
+	90 0 0
+	44.84024 44.84024 44.84024
+	freewaycurve1.mdl
+	freewaycurve1_006
+	ndef
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	926 2024 17
+	0 0 0
+	44.84024 44.84024 44.84024
+	freewaycurve1.mdl
+	freewaycurve1_006
+	ndef
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}
+{ //model
+	3
+	2049 915 19
+	180 0 0
+	44.84024 44.84024 44.84024
+	freewaycurve1.mdl
+	freewaycurve1_006
+	ndef
+	0 0 0 0 0 0 0 0
+	0000
+	0
+}

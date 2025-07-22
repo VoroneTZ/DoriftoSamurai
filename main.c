@@ -5,9 +5,47 @@
 #include <ackphysx.h>
 #include "mtlFX.c"
 var vg;
+var lap;
 SOUND* carai1_wav = "engine.ogg";
 var FTrafficCount=0;
 ///////////////////////////////
+
+var FSelect=0;
+
+PANEL* my_panel2 =
+{
+  pos_x = 0;
+  pos_y = 0;
+  digits(10, 10, "Use A & D to select a car", "Arial#20bi", 1, vg);
+  digits(10, 40, "Press Enter to race!", "Arial#20bi", 1, vg);
+ flags = SHOW;
+}
+
+PANEL* my_panel =
+{
+  pos_x = 0;
+  pos_y = 0;
+  digits(10, 10, "Position %2.0f", "Arial#20bi", 1, vg);
+  digits(10, 30, "Lap %2.0f", "Arial#20bi", 1, lap);
+ 
+}
+
+PANEL* winner_panel =
+{
+  pos_x = 400;
+  pos_y = 400;
+  digits(0, 0, "YOU ARE WINNER", "Arial#60bi", 1, vg);
+
+}
+
+PANEL* loser_panel =
+{
+  pos_x = 400;
+  pos_y = 400;
+  digits(0, 0, "YOU ARE LOSER", "Arial#60bi", 1, vg);
+ 
+}
+
 
 ENTITY* skycube =
 {
@@ -25,34 +63,23 @@ VIEW* fxa_mirror_view =
 
 }
 
+ENTITY* FCheck1;
+ENTITY* FCheck2;
+ENTITY* FCheck3;
+ENTITY* FCheck4;
+ENTITY* FCheck5;
+ENTITY* FCar1;
+ENTITY* FCar2;
 
-function main()
+action Acheckpoint()
 {
-  var vidhandle;
-  physX_open();
-
-
-  vec_set(sky_color, vector(10, 1, 1)); // dark blue
-  video_window(NULL, NULL, 0, "Dorifto Samurai");
-  d3d_antialias = 9;
-  shadow_stencil = 0;
-  video_mode = 9;
-  //  video_screen = 1;
-
-  level_load("1.wmb");
-
-  //  vidhandle = media_play("intro.wmv",NULL,100);
-  wait(-1);
-  while (media_playing(vidhandle) != 0)
-  {
-    wait(1);
-  }
-
-
-  media_play("1.mp3", NULL, 100);
-  pXent_settype(NULL, PH_STATIC, PH_PLANE);
-  pX_setgravity(vector(0, 0, -9.81));
+	if (my.skill1==1){FCheck1=me;}
+	if (my.skill1==2){FCheck2=me;}
+	if (my.skill1==3){FCheck3=me;}
+	if (my.skill1==4){FCheck4=me;}
+	if (my.skill1==5){FCheck5=me;}
 }
+
 
 function actor(type)
 {
@@ -64,14 +91,8 @@ function actor(type)
 
 
 
-PANEL* my_panel =
-{
-  pos_x = 0;
-  pos_y = 0;
-  digits(1000, 500`, "%2.2f", "Arial#20bi", 1, FCc);
-  //
-  flags = SHOW ;
-}
+
+
 
 
 
@@ -197,7 +218,10 @@ var GetNextNode2(ENTITY* enemy, var ANodeNum, var* ASkills)
 
 action ACar_Enemy()
 {
+	wait(1);
+	while(!player){wait(1);}
 	set(my,FLAG2);
+	if (my.skill17==1){FCar1=me;}else{FCar2=me;}
 	set(my,FLAG1);
 	set(my,TRANSLUCENT);
 	my.alpha=0;
@@ -221,6 +245,7 @@ action ACar_Enemy()
 	var p;
 		var v;
 	node_num1=1;
+	my.skill19=2;
 	
 	// lets find nearest node and set it as first node
 	
@@ -302,7 +327,7 @@ action ACar_Enemy()
 	var yp;
 	var brake;
 	wait(1);
-	var carai_engine = ent_playloop(my, carai1_wav, 300);
+	var carai_engine = ent_playloop(my, carai1_wav, 6000);
 
 		while (my.alpha<100){my.alpha+=1;	pXent_addforcelocal( me, _vec(100*cos(my.pan),100*sin(my.pan),0) , _vec(100,0,0)); wait(1);}reset(my,TRANSLUCENT);
 		AssignEnvMap(my);
@@ -313,14 +338,14 @@ action ACar_Enemy()
 		//	camera.x=my.x;
 		//	camera.y=my.y;
 		
-		if (vec_dist(my.x,player.x)>6000){ent_remove(me);FTrafficCount-=1;return;}
 		
-		if (vec_dist(my.x,vnode1)>300)
+		if (vec_dist(my.x,vnode1)>500)
 		{
-			accel=2050;		
+			accel=3050;		
 		}
 		else
-		{		
+		{	
+		accel=2050;		
 			node_num1=node_num2;
 			path_getnode(my,node_num1, vnode1, nodeskills);		
 			
@@ -346,7 +371,7 @@ action ACar_Enemy()
 
 		
 		// if AI to close to nodes, then get next nodes
-		if (vec_dist(my.x,tempv)<300)
+		if (vec_dist(my.x,tempv)<500)
 		{		
 			node_num1=node_num2;
 			path_getnode(my,node_num1, vnode1, nodeskills);		
@@ -362,7 +387,7 @@ action ACar_Enemy()
 			
 		}
 		
-		if (vec_dist(my.x,vnode2)<300)
+		if (vec_dist(my.x,vnode2)<500)
 		{		
 			node_num1=node_num2;
 			path_getnode(my,node_num1, vnode1, nodeskills);		
@@ -378,7 +403,7 @@ action ACar_Enemy()
 			
 		}
 		
-		if (vec_dist(my.x,vnode3)<300)
+		if (vec_dist(my.x,vnode3)<500)
 		{		
 			node_num1=node_num2;
 			path_getnode(my,node_num1, vnode1, nodeskills);		
@@ -444,17 +469,17 @@ action ACar_Enemy()
 		
 		
 		//if 1st node have big angle, AI slow down
-		if (abs(steer)>10)
+		if (abs(steer)>20)
+		{
+			accel=2700;	
+		}
+		if (abs(steer)>25)
+		{
+			accel=2500;	
+		}
+		if (abs(steer)>30)
 		{
 			accel=1550;	
-		}
-		if (abs(steer)>15)
-		{
-			accel=1050;	
-		}
-		if (abs(steer)>19)
-		{
-			accel=950;	
 		}
 		
 		
@@ -473,11 +498,11 @@ action ACar_Enemy()
 		// if 3rd path node have big angle, AI will slow down or stop
 		if (abs(brake)>10)
 		{
-			if (v>20)
-			{accel=800;}
+			if (v>30)
+			{accel=3800;}
 			else
-			{accel=1550;}
-			if (v>40)
+			{accel=3000;}
+			if (v>60)
 			{
 				accel=-800; 				
 			}
@@ -514,8 +539,9 @@ action ACar_Enemy()
 				{
 					if (z<800) // and it near than 800 quants, AI must stop
 					{						
-						accel=-10000; 
-						str_cat(debugs,"BRAKE!");		
+						accel=1500; 
+						steer += 30;
+					//	str_cat(debugaas,"BRAKE!");		
 					}
 				}
 				else
@@ -524,18 +550,20 @@ action ACar_Enemy()
 					{
 						if (z<400)
 						{
-							if (v>=1) // if we have velocity <10 and >1, AI will slowdown
+							if (v>=10) // if we have velocity <10 and >1, AI will slowdown
 							{
-								accel=-800;
+								accel=800;
 								str_cat(debugs,"brake");
+								steer += 20;
 							}				
 						}						
 						else
 						{							
-							if (v<2) // if AI stoped to early, AI can add some speed
+							if (v<10) // if AI stoped to early, AI can add some speed
 							{
-								accel=1800;
+								accel=2200;
 								str_cat(debugs,"go");
+								steer += 10;
 							}							
 						}
 					}
@@ -543,8 +571,9 @@ action ACar_Enemy()
 					{							
 						if (v<4) // if AI stoped to early, AI can add some speed
 						{
-							accel=800;
+							accel=2000;
 							str_cat(debugs,"go");
+							steer += 10;
 						}							
 					}
 					
@@ -558,8 +587,9 @@ action ACar_Enemy()
 					{
 						if (v>=1)
 						{
-							accel=-800;
+							accel=1800;
 							str_cat(debugs,"brake pass");
+							steer += 20;
 						}	
 					}
 				}
@@ -579,21 +609,40 @@ action ACar_Enemy()
 			vec_set(temp,my.x);
 			if (v>5)
 			{
-				accel=-1800;
+			//	accel=-1800;
+			steer += 20;
 			}
-			str_cat(debugs,"pass");
-		//	if (vec_to_screen(temp,camera)) 
-		//	draw_text(debugs,temp.x,temp.y,vector(100,100,255));			
+					
 		}
 		
 		if (accel<0){	lamin2=1;	}else{lamin2=0;}
 		if (lanim>2){lanim=0;}		
 		my.skin=1+(lamin2*2)+lanim;
 		
-		pXcon_setwheel (FLwheel,-steer,0,0);
-		pXcon_setwheel (FRwheel,-steer,0,0); // steer to the right
+		if (v<3){	vec_set(temp,vnode2); 
+  vec_sub(temp,my.x);
+  var temp3 =my.pan;
+  vec_to_angle(temp3,temp);
+  pXent_rotate (my, NULL, temp3); }
+  if (my.skill19==12){accel=0;}
+  else
+  if ((my.skill19==11)||(my.skill19==1)||(my.skill19==6)){if (vec_dist(my.x,FCheck1.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck1.x);}}
+  if ((my.skill19==2)||(my.skill19==7)){if (vec_dist(my.x,FCheck2.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck2.x);}}
+  if ((my.skill19==3)||(my.skill19==8)){if (vec_dist(my.x,FCheck3.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck3.x);}}
+  if ((my.skill19==4)||(my.skill19==9)){if (vec_dist(my.x,FCheck4.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck4.x);}}
+  if ((my.skill19==5)||(my.skill19==10)){if (vec_dist(my.x,FCheck5.x)<500){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck5.x);}}
+  
+  
+		
+		pXcon_setwheel (FLwheel,-steer,-accel,0);
+		pXcon_setwheel (FRwheel,-steer,-accel,0); // steer to the right
 		pXcon_setwheel (BLwheel,0,-accel,0);
 		pXcon_setwheel (BRwheel,0,-accel,0);
+		vec_set(temp,my.x);
+		temp.z+=100;
+		str_cpy(debugs,"v");
+		if (vec_to_screen(temp,camera)) 
+		draw_text(debugs,temp.x,temp.y,vector(100,100,255));	
 		
 		wait(1);		
 	}
@@ -601,7 +650,7 @@ action ACar_Enemy()
 
 
 action ACar_Traffic()
-{
+{	while(!player){wait(1);}
 	set(my,FLAG2);
 	set(my,FLAG1);
 	set(my,TRANSLUCENT);
@@ -707,7 +756,7 @@ action ACar_Traffic()
 	var yp;
 	var brake;
 	wait(1);
-	var carai_engine = ent_playloop(my, carai1_wav, 300);
+	var carai_engine = ent_playloop(my, carai1_wav, 700);
 
 		while (my.alpha<100){my.alpha+=1;	pXent_addforcelocal( me, _vec(100*cos(my.pan),100*sin(my.pan),0) , _vec(100,0,0)); wait(1);}reset(my,TRANSLUCENT);
 		AssignEnvMap(my);
@@ -1006,7 +1055,7 @@ action ACar_Traffic()
 
 
 action ATrafficSpawner()
-{
+{	while(!player){wait(1);}
 	var node_num1=1;
 	var node_num2;var v;
 	var z=999999;
@@ -1171,11 +1220,21 @@ action ATrafficLight()
 }
 
 //player action
+action ACarRotate()
+{
+	AssignEnvMap(my);
+	while (FSelect==0)
+	{
+		wait(1);
+		my.pan=my.pan+1*time_step;
+	}
+	my.skill20=0; wait(60); ent_remove(me);
+}
 
 action ACar()
 { //return 0;
-
-
+	wait(1);
+	my.skill19=2;
 	
 	tcamera_mode = 1;
 	tcamera_dist = 450;
@@ -1262,13 +1321,13 @@ action ACar()
 	set(BRwheel,INVISIBLE);
 	wait(1);
 
-	var carai_engine = ent_playloop(my, carai1_wav, 300);
+	var carai_engine = ent_playloop(my, carai1_wav, 10000);
 	var lsteer=0,lsteeror=0;
 	var lbrake;
 	var lanim=0;//pXent_addforcelocal( me, _vec(5000*cos(my.pan),5000*sin(my.pan),0) , _vec(100,0,0));
 	while(1)
 	{
-		accel=(key_w-key_s)*7500;		
+		accel=(key_w-key_s)*10000;		
 			vg=lsteer;
 		temp.x=accel*cosv(my.pan)-0*sinv(my.pan);
 		temp.y=0*cosv(my.pan)+accel*sinv(my.pan);
@@ -1291,6 +1350,29 @@ action ACar()
 		if (lsteer>lsteeror){lsteer-=10*time_step;}
 		if (v>10)
 		{if (accel<0){lbrake=-accel;}else{lbrake=0;}}else{lbrake=0;}
+		
+  if (my.skill19==12){accel=0;}  else  
+  if ((my.skill19==11)||(my.skill19==1)||(my.skill19==6)) {if (vec_dist(my.x,FCheck1.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck1.x);}}else
+  if ((my.skill19==2)||(my.skill19==7)) {if (vec_dist(my.x,FCheck2.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck2.x);}}else
+  if ((my.skill19==3)||(my.skill19==8)){if (vec_dist(my.x,FCheck3.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck3.x);}}else
+  if ((my.skill19==4)||(my.skill19==9)){if (vec_dist(my.x,FCheck4.x)<1000){my.skill19=my.skill19+1;}else{my.skill18=vec_dist(my.x,FCheck4.x);}}else
+  
+  if ((my.skill19==5)||(my.skill19==10))
+  {
+  	if (vec_dist(my.x,FCheck5.x)<1000)
+  	{
+  		my.skill19=my.skill19+1;
+  	}
+  	else
+  	{
+  		my.skill18=vec_dist(my.x,FCheck5.x);
+  	}
+  }
+  
+  if (my.skill19<7){lap=1;}else{lap=2;}
+
+		
+		
 		pXcon_setwheel (FLwheel,floor(lsteer)-1,0,lbrake);
 		pXcon_setwheel (FRwheel,floor(lsteer)+1,0,lbrake); 
 		pXcon_setwheel (BLwheel,-1,accel/((v/50)+1),lbrake+key_space*4000);
@@ -1300,3 +1382,118 @@ action ACar()
 	}
 }
 
+
+
+function main()
+{
+  var vidhandle;
+  physX_open();
+
+
+  vec_set(sky_color, vector(10, 1, 1)); // dark blue
+  video_window(NULL, NULL, 0, "Dorifto Samurai");
+  d3d_antialias = 9;
+  shadow_stencil = 0;
+  video_mode = 9;
+
+  //  video_screen = 1;
+  vidhandle = media_loop("3.mp3", NULL, 100);
+  
+   level_load("2.wmb");
+     camera.z=100;
+  camera.tilt=-10;
+  camera.pan=270;
+  
+  
+  while (FSelect==0)
+  {
+  	if (key_a){camera.pan-=90;wait(-1);}
+  		if (key_d){camera.pan+=90;wait(-1);}
+  		vg=camera.pan;
+  		if (camera.pan>=360){camera.pan-=360;} 
+  		if (camera.pan<0){camera.pan+=360;} 
+  		if (key_enter){FSelect=1;}
+  	wait(1);
+  	}
+  	
+  	if (camera.pan<89){FSelect=1;}else
+  	if (camera.pan<179){FSelect=2;}else
+  	if (camera.pan<260){FSelect=3;}else
+   {FSelect=4;}
+   reset(my_panel2,SHOW);	
+  set(my_panel,SHOW);
+  media_stop(vidhandle);
+      vidhandle = media_play("intro.wmv",NULL,100);
+
+  level_load("1.wmb");
+  if (FSelect==4){
+  ent_create("rsx.mdl",_vec(11650,26868,885),ACar);}
+  if (FSelect==3){
+  ent_create("cap.mdl",_vec(11650,26868,885),ACar);}
+  if (FSelect==2){
+  ent_create("350z.mdl",_vec(11650,26868,885),ACar);}
+  if (FSelect==1){
+  ent_create("celica.mdl",_vec(11650,26868,885),ACar);}
+  
+
+
+  wait(-1);
+  while (media_playing(vidhandle) != 0)
+  {
+    wait(1);
+  }
+
+  if (FSelect==4){
+  media_loop("2.mp3", NULL, 100);}
+  else{
+  media_loop("1.mp3", NULL, 100);}
+  
+  
+  
+  
+  pXent_settype(NULL, PH_STATIC, PH_PLANE);
+  pX_setgravity(vector(0, 0, -9.81));
+  
+  while (player.skill19<12)
+  {
+  	wait(1);
+  	 if (player.skill19>FCar1.skill19)
+  	 {
+  	 	if (player.skill19>FCar2.skill19){vg=1;}
+  	 	else  
+  	 	if (player.skill19<FCar2.skill19){vg=2;}
+  	 	else
+  	 	if (player.skill18<FCar2.skill18){vg=1;}else{vg=2;}	 
+  	 }
+  	 else
+  	 if (player.skill19<FCar1.skill19)
+  	 {
+  	 	if (player.skill19>FCar2.skill19){vg=2;}
+  	 	else  
+  	 	if (player.skill19<FCar2.skill19){vg=3;}
+  	 	else
+  	 	if (player.skill18<FCar2.skill18){vg=2;}else{vg=3;}	 
+  	 }
+  	 else
+  	 {
+  	 	if (player.skill18<FCar1.skill18)
+  	 	{
+  	 	if (player.skill19>FCar2.skill19){vg=1;}
+  	 	else  
+  	 	if (player.skill19<FCar2.skill19){vg=2;}
+  	 	else
+  	 	if (player.skill18<FCar2.skill18){vg=1;}else{vg=2;}
+  	 	}	 
+  	 	else
+  	 	{
+  	 	if (player.skill19>FCar2.skill19){vg=2;}
+  	 	else  
+  	 	if (player.skill19<FCar2.skill19){vg=3;}
+  	 	else
+  	 	if (player.skill18<FCar2.skill18){vg=2;}else{vg=3;}
+  	 	}  	 	
+  	 }  	
+  }
+  
+  if (vg==1){set(winner_panel,SHOW);}else{set(loser_panel,SHOW);}
+}
