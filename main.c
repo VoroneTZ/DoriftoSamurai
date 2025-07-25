@@ -679,7 +679,7 @@ action ACar_Enemy() {
       }
     }
 
-    if ((accel > 0) && (v < 3) && (abs(steer) > 20)) {
+    if ((accel > 0) && (v < 2) && (abs(steer) > 10)) {
       vec_set(temp, vnode2);
       vec_sub(temp, my.x);
         temp3.pan = my.pan;
@@ -1111,7 +1111,7 @@ action ATrafficSpawner() {
   var nodeskills[6];
   wait(-1);
   var ltypecar;
-  while (1) {
+  while (FDestroyMe==1) {
     if (FTrafficCount < 20) {
       my.x = player.x + (random(10000)) - 5000;
       my.y = player.y + (random(10000)) - 5000;
@@ -1242,14 +1242,13 @@ action ATrafficLight() {
 
 // player action
 action ACarRotate() {
-  AssignEnvMap(my);
+  AssignStaticEnvMap(my);
   while (FSelect == 0) {
     wait(1);
     my.pan = my.pan + 1 * time_step;
   }
   my.skill20 = 0;
-  wait(60);
-  ent_remove(me);
+
 }
 
 action ACar() {
@@ -1552,7 +1551,7 @@ ANGLE temp3;
       temp3.tilt=0;
       temp3.roll=0;
       pXent_rotate(my, NULL, temp3);
-      wait(1);
+      wait(-1);
       
       
     }
@@ -1599,6 +1598,7 @@ function main() {
   winner_panel.pos_x = (screen_size.x/2)-250;
 
 start:
+ FDestroyMe=1;
 FCar1=NULL;
 FCar2=NULL;
   FSelect = 0;
@@ -1661,6 +1661,7 @@ FCar2=NULL;
   set(my_panel, SHOW);
   media_stop(vidhandle);
   vidhandle = media_play("intro.wmv", NULL, 100);
+   FDestroyMe=1;
   wait(-2);
   level_load("1.wmb");
   if (FSelect == 4) {
@@ -1733,7 +1734,7 @@ FCar2=NULL;
     camera2_view.z = 10000;
     camera2_view.pan = player.pan;
     camera2_view.tilt = -90;
-
+ 
     if (player.skill19 > FCar1.skill19) {
       if (player.skill19 > FCar2.skill19) {
         vg = 1;
@@ -1784,10 +1785,13 @@ FCar2=NULL;
   } else {
     set(loser_panel, SHOW);
   }
+  
   wait(-5);
   media_stop(vidhandle2);
   reset(camera2_view, SHOW);
   reset(winner_panel, SHOW);
   reset(loser_panel, SHOW);
+  FDestroyMe=0;
+  wait(-1);
   goto start;
 }

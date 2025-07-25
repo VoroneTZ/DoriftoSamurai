@@ -53,7 +53,7 @@ function mtl_Dynenvmap_init()
 	mtl.matrix41 = 0;
 	mtl.matrix42 = 0;
 	mtl.matrix43 = 0;	
-	while (my.skill20>0)
+	while ((my.skill20>0)&&(FDestroyMe==1))
 	{
 		
 		if (!(my.eflags&CLIPPED))
@@ -93,6 +93,23 @@ function mtl_Dynenvmap_init()
 	ptr_remove (cv_w);
 	ptr_remove (lbm);
 	FCc = FCc-1;
+}
+
+function AssignEnvMap(ENTITY* AEnt)
+{
+	MATERIAL* l_DynEnvMap;
+	AEnt.skill20=1;
+	l_DynEnvMap = mtl_create();
+	l_DynEnvMap.skill20=1;
+	l_DynEnvMap.event = mtl_Dynenvmap_init;	
+	l_DynEnvMap.effect = "envmirror.fx";
+	AEnt.material = l_DynEnvMap;
+	while ((AEnt.skill20>0)&&(FDestroyMe==1))
+	{wait(1);}
+	l_DynEnvMap.skill20=0;
+	wait(10);
+	ptr_remove(l_DynEnvMap);
+
 }
 
 
@@ -168,25 +185,13 @@ function mtl_Stenvmap_init()
 
 	
 	ptr_remove(cv_w);
-}
-
-
-function AssignEnvMap(ENTITY* AEnt)
-{
-	MATERIAL* l_DynEnvMap;
-	AEnt.skill20=1;
-	l_DynEnvMap = mtl_create();
-	l_DynEnvMap.skill20=1;
-	l_DynEnvMap.event = mtl_Dynenvmap_init;	
-	l_DynEnvMap.effect = "envmirror.fx";
-	AEnt.material = l_DynEnvMap;
-	while (AEnt.skill20>0)
+	while (FDestroyMe==1)
 	{wait(1);}
-	l_DynEnvMap.skill20=0;
-	wait(60);
-	ptr_remove(l_DynEnvMap);
-
+	ptr_remove (lbm);
 }
+
+
+
 
 
 MATERIAL* F_SEnvMap =
@@ -203,7 +208,7 @@ function AssignStaticEnvMap(ENTITY* AEnt)
 	l_SEnvMap.event = mtl_Stenvmap_init;	
 	l_SEnvMap.effect = "envmirror.fx";
 	AEnt.material = l_SEnvMap;
-	while (FDestroyMe=1)
+	while (FDestroyMe==1)
 	{wait(1);}
 	ptr_remove(l_SEnvMap);
 }
