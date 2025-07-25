@@ -23,7 +23,7 @@
 //ENDHEADER
 // ---------------------------------------------------------------------
 
-#include <createCubemap.c>
+#include "createCubemap.c"
 
 #ifndef mtlfx_c
 #define mtlfx_c
