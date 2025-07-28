@@ -814,7 +814,9 @@ action ACar_Traffic() {
     pXent_addforcelocal(me, _vec(100 * cos(my.pan), 100 * sin(my.pan), 0), _vec(100, 0, 0));
     wait(1);
   }
+  my.alpha=100;
   reset(my, TRANSLUCENT);
+  wait(1);
   AssignEnvMap(my);
   var lanim, lamin2;
   while (1) {
@@ -1107,6 +1109,7 @@ action ATrafficSpawner() {
   VECTOR vnode1;
   VECTOR vnode2;
   VECTOR vnode3;
+  FTrafficCount =0;
   VECTOR vnode4;
   var nodeskills[6];
   wait(-1);
