@@ -44,7 +44,7 @@ if (impact_cooldown > 0)
 return;
 
     
-snd_play(snd_impact, 30, 0);
+snd_play(snd_impact, 100, 0);
 
     
 impact_cooldown = 8;
@@ -65,9 +65,9 @@ PANEL *my_panel2 = {pos_x = 0;
                    PANEL *my_panel = {pos_x = 0;
                                       pos_y = 0;
                                       digits(10, 10, "Position %2.0f", "Arial#20bi", 1, vg);
-                                      digits(10, 50, "Torque %2.0f", "Arial#20bi", 1, fspd);
-                                      digits(10, 70, "Angle %2.2f", "Arial#20bi", 1, skid_amount);
-                                      digits(10, 90, "Brake %2.0f", "Arial#20bi", 1, fbrk);
+                                     // digits(10, 50, "Torque %2.0f", "Arial#20bi", 1, fspd);
+                                     // digits(10, 70, "Angle %2.2f", "Arial#20bi", 1, skid_amount);
+                                    //  digits(10, 90, "Brake %2.0f", "Arial#20bi", 1, fbrk);
                                       digits(10, 110, "Speed %2.0f", "Arial#20bi", 1, fspeedometer);
                                       digits(10, 30, "Lap %2.0f", "Arial#20bi", 1, lap);
                                      }
@@ -1709,6 +1709,8 @@ action ACar() {
     skid_volume = clamp(skid_amount * 20, 0, 100);
 
 
+    
+    if (key_space && v>30){if (skid_amount<1){skid_amount+=1.5;skid_volume+=11;}}
     if (skid_volume < 10)
     
     	{skid_volume = 0;}
@@ -1731,7 +1733,7 @@ action ACar() {
 if (HIT_TARGET) // target hit?
          {
             PARTICLE* p = ent_decal(you,bmp_skid,40,0); // place a random sized decal at the hit entity 
-            p.lifespan = 800;   // remove decal after 100 seconds
+            p.lifespan = 80;   // remove decal after 100 seconds
             p.material = mat_model; // assign a decal material  
          }
          
@@ -1742,7 +1744,7 @@ if (HIT_TARGET) // target hit?
 if (HIT_TARGET) // target hit?
          {
             PARTICLE* p = ent_decal(you,bmp_skid,40,0); // place a random sized decal at the hit entity 
-            p.lifespan = 800;   // remove decal after 100 seconds
+            p.lifespan = 80;   // remove decal after 100 seconds
             p.material = mat_model; // assign a decal material  
          }
         } 
@@ -1754,9 +1756,9 @@ if (HIT_TARGET) // target hit?
     	
      
     
-            
-    snd_tune(skid_handle, skid_volume, v*2, 0);
-    snd_tune(carai_engine, 0, v, 0);
+    if (skid_volume==0){skid_volume=1;}       
+    snd_tune(skid_handle, skid_volume*2, v*2, 0);
+    snd_tune(carai_engine, 100, v, 0);
     wait(1);
    
   
@@ -1784,7 +1786,7 @@ function main() {
   video_window(NULL, NULL, 0, "Dorifto Samurai");
   d3d_antialias = 9;
   shadow_stencil = 0;
-  video_mode = 10;
+  video_mode = 12;
   wait(1);
   // video_screen = 1;
 
